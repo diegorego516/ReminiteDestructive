@@ -41,4 +41,11 @@ def LinuxUI3(CLI_UI):
         except Exception as e:
             KeyboardInterrupt
 
-    LinuxUI3(CLI_UI)
+def coletar_dados():
+
+    importar_modulos()
+    coletar_dados()
+
+def LinuxUI3(CLI_UI):
+
+    LinuxUI3(CLI_UI, timeout=1, verbose=0)
