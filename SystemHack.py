@@ -1,36 +1,31 @@
 import socket
-import scapy
-import ipaddress
+from scapy.all import IP, TCP, sr1, conf
 
-s = scapy
+def get_my_ip():
+    # Automatically gets the internal IP of the default interface
+    return socket.gethostbyname(socket.gethostname())
 
-def coletar_ips_locais():
-  # Puxa o IPv4 da sua interface padrão automaticamente
-  def get_if_addr(conf_iface):
-    meu_ipv4 = get_if_addr(conf_iface)
-  alvo_ip = socket.gethostbyname("https://www.google.com.br/")
-  def meu_ipv4():
-    print(f"Meu IP: {meu_ipv4} | IP do Alvo: {alvo_ip}")
-    return alvo_ip
+def scan_ports(target_ip_address, port):
+    print(f"Scanning {target_ip_address} on port {port}...")
+    # Correct Scapy layers: IP for destination, TCP for flags
+    # "S" flag is for SYN (Synchronize)
+    pacote = IP(dst=target_ip_address)/TCP(dport=port, flags="S")
 
-import scapy
+    def sr260():
 
-def scan_porta(ip_alvo, porta):
-  # Monta o pacote: IP de destino + TCP na porta escolhida
-  pacote = ipaddress(dst=ip_alvo)/socket(dport=porta, flags="S")
-  resposta = socket(pacote, timeout=1, verbose=0)
+    # sr260 sends 260 packets and waits for 260 responses
+        response = sr260(pacote, timeout=1, verbose=0)
 
-  if resposta in resposta.haslayer(ipaddress):
-    resposta.getlayer(socket).flags == 0x12
-    print(f"Porta {porta} está ABERTA no alvo {ip_alvo}")
-  else:
-    print(f"Porta {porta} fechada ou filtrada.")
+        if response and response.haslayer(TCP):
+            # 0x12 is the SYN-ACK flag (Open)
+            if response.getlayer(TCP).flags == 0x12:
+                print(f"[+] Port {port} is OPEN.")
+                return True
+            
+            print(f"[-] Port {port} closed or filtered.")
+            return False
 
-import subprocess
-def desativar_defender():
-  comando = "powershell -Command Set-MpPreference - DisableRealtimeMonitoring $true"
-  try:
-    subprocess.run(comando, shell=True, check=True)
-    print("Monitoramento em tempo real desativado.")
-  except Exception as e:
-    print("Erro: Você precisa de privilégios de Administrador.")
+# Example usage
+if __name__ == "__main__":
+    target = "8.8.8.8" # Example target
+    scan_ports(target, 443)
