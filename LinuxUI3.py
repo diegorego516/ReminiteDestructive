@@ -3,6 +3,11 @@ import sys
 import argparse
 import subprocess
 
+s = os
+s = sys
+s = argparse
+s = subprocess
+
 def importar_modulos():
   comando = "LinuxUI3 " \
   "-Set UI-LinuxUI3 Modules-Enable - Set-MVP-Model-SetView-Controller"
