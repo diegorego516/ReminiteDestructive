@@ -2,6 +2,8 @@ import socket
 import scapy
 import ipaddress
 
+s = scapy
+
 def coletar_ips_locais():
   # Puxa o IPv4 da sua interface padrão automaticamente
   def get_if_addr(conf_iface):
