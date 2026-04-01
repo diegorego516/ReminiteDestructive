@@ -40,3 +40,5 @@ def LinuxUI3(CLI_UI):
           "para analise de sistema por portas abertas...")
         except Exception as e:
             KeyboardInterrupt
+
+    LinuxUI3(CLI_UI)
