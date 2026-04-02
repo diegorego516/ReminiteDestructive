@@ -1,31 +1,47 @@
 import socket
-from scapy.all import IP, TCP, sr1, conf
 
-def get_my_ip():
-    # Automatically gets the internal IP of the default interface
-    return socket.gethostbyname(socket.gethostname())
+def servidor():
+    HOST = "127.0.0.1"
+    PORT = 5000
 
-def scan_ports(target_ip_address, port):
-    print(f"Scanning {target_ip_address} on port {port}...")
-    # Correct Scapy layers: IP for destination, TCP for flags
-    # "S" flag is for SYN (Synchronize)
-    pacote = IP(dst=target_ip_address)/TCP(dport=port, flags="S")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((HOST, PORT))
+    s.listen(1)
+    print("Servidor aguardando conexão...")
 
-    def sr260():
+    conn, addr = s.accept()
+    print("Conectado por", addr)
 
-    # sr260 sends 260 packets and waits for 260 responses
-        response = sr260(pacote, timeout=1, verbose=0)
+    while True:
+        data = conn.recv(1024).decode("utf-8")
+        if not data or data.lower() == "sair":
+            break
+        print("Mensagem recebida:", data)
+        conn.send(f"Eco: {data}".encode("utf-8"))
 
-        if response and response.haslayer(TCP):
-            # 0x12 is the SYN-ACK flag (Open)
-            if response.getlayer(TCP).flags == 0x12:
-                print(f"[+] Port {port} is OPEN.")
-                return True
-            
-            print(f"[-] Port {port} closed or filtered.")
-            return False
+    conn.close()
+    s.close()
 
-# Example usage
+def cliente():
+    HOST = "127.0.0.1"
+    PORT = 5000
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
+
+    while True:
+        msg = input("Digite uma mensagem ('sair' para encerrar): ")
+        s.send(msg.encode("utf-8"))
+        if msg.lower() == "sair":
+            break
+        resposta = s.recv(1024).decode("utf-8")
+        print("Servidor respondeu:", resposta)
+
+    s.close()
+
 if __name__ == "__main__":
-    target = "8.8.8.8" # Example target
-    scan_ports(target, 443)
+    escolha = input("Digite 's' para servidor ou 'c' para cliente: ")
+    if escolha == "s":
+        servidor()
+    else:
+        cliente()
